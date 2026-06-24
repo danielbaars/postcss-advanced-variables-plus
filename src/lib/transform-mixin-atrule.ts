@@ -7,12 +7,12 @@ import type { WithVariables, VariableValue } from "./get-variables.js";
 
 type MixinParam = { name: string; value: string | undefined };
 
-const matchOpeningParen = "(";
-
 const getMixinOpts = (node: AtRule, opts: TransformOpts) => {
-  const [name, sourceParams] = node.params.split(matchOpeningParen, 2) as [string, string | undefined];
-  const params: MixinParam[] = sourceParams && sourceParams.slice(0, -1).trim()
-    ? list.comma(sourceParams.slice(0, -1).trim()).map(param => {
+  const openParenIndex = node.params.indexOf("(");
+  const name = openParenIndex === -1 ? node.params.trim() : node.params.slice(0, openParenIndex).trim();
+  const rawParams = openParenIndex === -1 ? undefined : node.params.slice(openParenIndex + 1, -1).trim();
+  const params: MixinParam[] = rawParams
+    ? list.comma(rawParams).map(param => {
         const parts = list.split(param, [":"], true);
         const paramName = parts[0]!.slice(1);
         const paramValue = parts.length > 1

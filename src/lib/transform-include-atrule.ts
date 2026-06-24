@@ -8,11 +8,10 @@ import type { AtRule } from "postcss";
 import type { TransformOpts } from "../transform-opts.js";
 import type { WithVariables } from "./get-variables.js";
 
-const matchOpeningParen = "(";
-
 const getIncludeOpts = (node: AtRule) => {
-  const [name, sourceArgs] = node.params.split(matchOpeningParen, 2) as [string, string | undefined];
-  const args = sourceArgs ? list.comma(sourceArgs.slice(0, -1)) : [];
+  const openParenIndex = node.params.indexOf("(");
+  const name = openParenIndex === -1 ? node.params.trim() : node.params.slice(0, openParenIndex).trim();
+  const args = openParenIndex === -1 ? [] : list.comma(node.params.slice(openParenIndex + 1, -1));
   return { name, args };
 };
 

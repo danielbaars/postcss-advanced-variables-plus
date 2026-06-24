@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 — 2026-06-24
+
+### Bug fixes
+
+- **Mixin arguments with parenthesised values now resolve correctly** — `var(--x)`, `rgb(...)`, `hsl(...)`, and any other function-valued argument passed to `@include` were being truncated to the text before the inner `(`. The same bug affected parenthesised default values in `@mixin` definitions. Closes csstools/postcss-advanced-variables#77 and #78.
+
+---
+
 ## 1.0.0 — 2026-06-24
 
 Initial release as `postcss-advanced-variables-plus`.
