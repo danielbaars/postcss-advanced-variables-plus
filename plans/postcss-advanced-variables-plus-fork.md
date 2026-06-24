@@ -150,11 +150,11 @@ Phase 3 is also when the first commit lands on GitHub. Suggested commit sequence
 
 ### Acceptance criteria
 
-- [ ] `package.json` entry points (`main`, `exports`, `types`) resolve to the actual tsdown output filenames
-- [ ] `LICENSE.md` is CC0-1.0
-- [ ] README attributes Jonathan Neal and csstools
-- [ ] README covers all options including `aliases` and `resolveId` (on `ImportResolverOptions`)
-- [ ] CI workflow passes on GitHub
-- [ ] `npm publish --dry-run` shows only `dist/`, `package.json`, `README.md`, `LICENSE.md`, `CHANGELOG.md`
-- [ ] Package published and installable via `npm install postcss-advanced-variables-plus`
-- [ ] `v1.0.0` tag exists on GitHub
+- [x] `package.json` entry points (`main`, `exports`, `types`) resolve to the actual tsdown output filenames
+- [x] `LICENSE.md` is CC0-1.0
+- [x] README attributes Jonathan Neal and csstools
+- [x] README covers all options including `aliases` and `resolveId` (on `ImportResolverOptions`)
+- [x] CI workflow passes on GitHub
+- [x] `npm publish --dry-run` shows only `dist/`, `package.json`, `README.md`, `LICENSE.md`, `CHANGELOG.md`
+- [x] Package published and installable via `npm install postcss-advanced-variables-plus`
+- [x] `v1.0.0` tag exists on GitHub
