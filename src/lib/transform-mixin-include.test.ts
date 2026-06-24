@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 import postcss from "postcss";
+import postcssScss from "postcss-scss";
 import plugin from "../index.js";
 
 const run = (input: string) =>
   postcss([plugin()]).process(input, { from: undefined }).then(r => r.css);
+
+const runScss = (input: string) =>
+  postcss([plugin()]).process(input, { from: undefined, syntax: postcssScss }).then(r => r.css);
 
 describe("mixin argument paren-splitting", () => {
   it("passes var() arg correctly", async () => {
@@ -77,5 +81,55 @@ describe("mixin argument paren-splitting", () => {
       a { @include foo; }
     `);
     expect(result).toContain("color: red");
+  });
+});
+
+describe("variable mixin names in @include (issue #112)", () => {
+  it("resolves bare $v as mixin name", async () => {
+    const result = await run(`
+      @mixin foo { color: red; }
+      $v: foo;
+      a { @include $v; }
+    `);
+    expect(result).toContain("color: red");
+  });
+
+  it("resolves $(v) as mixin name", async () => {
+    const result = await run(`
+      @mixin foo { color: red; }
+      $v: foo;
+      a { @include $(v); }
+    `);
+    expect(result).toContain("color: red");
+  });
+
+  it("resolves $v as mixin name with args", async () => {
+    const result = await run(`
+      @mixin colored($c) { color: $c; }
+      $v: colored;
+      a { @include $v(blue); }
+    `);
+    expect(result).toContain("color: blue");
+  });
+
+  it("resolves $(v) as mixin name with args", async () => {
+    const result = await run(`
+      @mixin colored($c) { color: $c; }
+      $v: colored;
+      a { @include $(v)(blue); }
+    `);
+    expect(result).toContain("color: blue");
+  });
+
+  it("resolves mixin name from @each loop variable (issue #112 pattern)", async () => {
+    const result = await runScss(`
+      @mixin sm { font-size: 1rem; }
+      @mixin md { font-size: 2rem; }
+      @each $v in sm, md {
+        .#{$v} { @include $(v); }
+      }
+    `);
+    expect(result).toContain("font-size: 1rem");
+    expect(result).toContain("font-size: 2rem");
   });
 });

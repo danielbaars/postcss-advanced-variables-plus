@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.4.0 — 2026-06-24
+
+### Bug fixes
+
+- **Variable mixin names in `@include` now resolve correctly** — `@include $(v)`, `@include $v`, and `@include $(v)(args)` now look up the variable value before resolving the mixin, so the mixin name can be supplied dynamically (e.g. from an `@each` loop variable). Closes csstools/postcss-advanced-variables#112.
+
+  ```css
+  @mixin sm { font-size: 1rem; }
+  @mixin md { font-size: 2rem; }
+
+  @each $v in sm, md {
+    .#{$v} { @include $(v); }
+  }
+  /* → .sm { font-size: 1rem; }  .md { font-size: 2rem; } */
+  ```
+
+---
+
 ## 1.3.0 — 2026-06-24
 
 ### New features

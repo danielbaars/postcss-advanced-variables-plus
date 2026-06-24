@@ -8,17 +8,18 @@ import type { AtRule } from "postcss";
 import type { TransformOpts } from "../transform-opts.js";
 import type { WithVariables } from "./get-variables.js";
 
-const getIncludeOpts = (node: AtRule) => {
-  const openParenIndex = node.params.indexOf("(");
-  const name = openParenIndex === -1 ? node.params.trim() : node.params.slice(0, openParenIndex).trim();
-  const args = openParenIndex === -1 ? [] : list.comma(node.params.slice(openParenIndex + 1, -1));
+const getIncludeOpts = (node: AtRule, opts: TransformOpts) => {
+  const resolved = getReplacedString(node.params, node as unknown as WithVariables, opts);
+  const openParenIndex = resolved.indexOf("(");
+  const name = openParenIndex === -1 ? resolved.trim() : resolved.slice(0, openParenIndex).trim();
+  const args = openParenIndex === -1 ? [] : list.comma(resolved.slice(openParenIndex + 1, -1));
   return { name, args };
 };
 
 const transformIncludeAtrule = (rule: AtRule, opts: TransformOpts): Promise<void> | undefined => {
   if (!opts.transform.includes("@include")) return undefined;
 
-  const { name, args } = getIncludeOpts(rule);
+  const { name, args } = getIncludeOpts(rule, opts);
   const mixin = getClosestVariable(`@mixin ${name}`, rule.parent as WithVariables, opts) as
     | { params: Array<{ name: string; value: string | undefined }>; rule: AtRule }
     | undefined;
