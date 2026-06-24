@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2.0 — 2026-06-24
+
+### Bug fixes
+
+- **`[A-z]` regex corrected to `[A-Za-z]`** in `get-replaced-string.ts` — the prior character class accidentally matched non-letter ASCII characters between `Z` and `a` (e.g. `[`, `\`, `^`).
+
+### Documentation
+
+- **`#{}` interpolation in selectors and property names now documented** — PostCSS's standard CSS parser rejects `#{...}` in selectors, property names, and declaration values. The plugin transform logic handles these correctly; the limitation is at the parser layer. Using `postcss-scss` as the syntax resolves both upstream issues [#75](https://github.com/csstools/postcss-advanced-variables/issues/75) (custom property name interpolation in `@each`) and [#91](https://github.com/csstools/postcss-advanced-variables/issues/91) (BEM selector interpolation). README updated with examples.
+
+---
+
 ## 1.1.0 — 2026-06-24
 
 ### Bug fixes

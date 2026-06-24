@@ -3,7 +3,7 @@ import manageUnresolved from "./manage-unresolved.js";
 import type { WithVariables, VariableValue } from "./get-variables.js";
 import type { TransformOpts } from "../transform-opts.js";
 
-const matchVariables = /(.?)(?:\$([A-z][\w-]*)|\$\(([A-z][\w-]*)\)|#\{\$([A-z][\w-]*)\})/g;
+const matchVariables = /(.?)(?:\$([A-Za-z][\w-]*)|\$\(([A-Za-z][\w-]*)\)|#\{\$([A-Za-z][\w-]*)\})/g;
 
 const stringify = (object: VariableValue): string => {
   if (Array.isArray(object)) return `(${object.map(stringify).join(",")})`;

@@ -37,6 +37,47 @@ export default {
 }
 ```
 
+### `#{}` interpolation in selectors and property names
+
+PostCSS's standard CSS parser rejects `#{...}` in selectors, property names, and declaration values because `{` would be interpreted as opening a block. To use `#{}` in those positions, pair this plugin with a SCSS-aware syntax:
+
+```sh
+npm install postcss-scss
+```
+
+```js
+import postcssScss from 'postcss-scss'
+
+export default {
+  syntax: postcssScss,
+  plugins: [advancedVariables()]
+}
+```
+
+```css
+/* now valid with postcss-scss */
+$layers: alpha, beta, gamma;
+
+:root {
+  @each $layer in $layers {
+    --#{$layer}: 1;          /* CSS custom property with interpolated name */
+  }
+}
+
+.nav {
+  $c: nav;
+  #{$c}__label { color: red; }   /* BEM selector interpolation */
+}
+```
+
+`#{}` inside at-rule params works without `postcss-scss` because the surrounding `()` protect the inner `{` from being misread by the standard parser:
+
+```css
+/* works without postcss-scss */
+$bp: 600px;
+@media (min-width: #{$bp}) { }
+```
+
 ### With Vite aliases
 
 ```js
