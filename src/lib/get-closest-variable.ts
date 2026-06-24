@@ -1,5 +1,5 @@
-import getVariables, { type VariableValue, type VariableMap, type WithVariables } from "./get-variables.js";
 import type { PluginOptions } from "../options.js";
+import getVariables, { type VariableValue, type VariableMap, type WithVariables } from "./get-variables.js";
 
 const requiresAncestorVariable = (variable: VariableValue | undefined, node: WithVariables): boolean =>
   variable === undefined && node != null && node.parent != null;
@@ -7,7 +7,11 @@ const requiresAncestorVariable = (variable: VariableValue | undefined, node: Wit
 const requiresFnVariable = (value: VariableValue | undefined, opts: PluginOptions): boolean =>
   value === undefined && typeof opts.variables === "object" && opts.variables !== null;
 
-const getFnVariable = (name: string, node: WithVariables, variables: PluginOptions["variables"]): VariableValue | undefined => {
+const getFnVariable = (
+  name: string,
+  node: WithVariables,
+  variables: PluginOptions["variables"],
+): VariableValue | undefined => {
   if (typeof variables === "function") return variables(name, node);
   if (typeof variables === "object" && variables !== null) return (variables as VariableMap)[name];
   return undefined;

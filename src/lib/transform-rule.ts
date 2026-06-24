@@ -1,6 +1,6 @@
-import getReplacedString from "./get-replaced-string.js";
 import type { Rule } from "postcss";
 import type { TransformOpts } from "../transform-opts.js";
+import getReplacedString from "./get-replaced-string.js";
 import type { WithVariables } from "./get-variables.js";
 
 const transformRule = (rule: Rule, opts: TransformOpts): void => {

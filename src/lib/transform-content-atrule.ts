@@ -1,7 +1,7 @@
-import transformNode from "./transform-node.js";
-import manageUnresolved from "./manage-unresolved.js";
 import type { AtRule } from "postcss";
 import type { TransformOpts } from "../transform-opts.js";
+import transformNode from "./transform-node.js";
+import manageUnresolved from "./manage-unresolved.js";
 import type { WithVariables } from "./get-variables.js";
 
 const getClosestMixin = (node: AtRule): AtRule | undefined => {

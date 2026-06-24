@@ -3,7 +3,9 @@ import postcss from "postcss";
 import plugin from "./index.js";
 
 const process = (css: string, opts = {}) =>
-  postcss([plugin(opts)]).process(css, { from: undefined }).then(r => r.css);
+  postcss([plugin(opts)])
+    .process(css, { from: undefined })
+    .then((r) => r.css);
 
 describe("postcss-advanced-variables-plus", () => {
   it("is a valid postcss plugin", () => {

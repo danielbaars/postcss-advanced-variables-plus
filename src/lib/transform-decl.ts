@@ -1,8 +1,8 @@
+import type { Declaration } from "postcss";
+import type { TransformOpts } from "../transform-opts.js";
 import getReplacedString from "./get-replaced-string.js";
 import setVariable from "./set-variable.js";
 import evaluateExpression from "./evaluate-expression.js";
-import type { Declaration } from "postcss";
-import type { TransformOpts } from "../transform-opts.js";
 import type { WithVariables } from "./get-variables.js";
 
 const matchVariable = /^\$[\w-]+$/;

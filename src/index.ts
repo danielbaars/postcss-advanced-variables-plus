@@ -16,8 +16,8 @@ const plugin = (opts: PluginOptions = {}): Plugin => ({
   postcssPlugin: "postcss-advanced-variables-plus",
   Root(root, { result }) {
     const disabledFeatures = String(opts.disable ?? "").split(/\s*,\s*|\s+,?\s*|\s,?\s+/);
-    const transform = allFeatures.filter(f => !disabledFeatures.includes(f));
-    const unresolved = (String(opts.unresolved ?? "throw").toLowerCase()) as "throw" | "warn" | "ignore";
+    const transform = allFeatures.filter((f) => !disabledFeatures.includes(f));
+    const unresolved = String(opts.unresolved ?? "throw").toLowerCase() as "throw" | "warn" | "ignore";
     const importCache = Object(opts.importCache) as Record<string, unknown>;
     const importFilter = opts.importFilter ?? ((id: string) => !matchProtocol.test(id));
     const importPaths = ([] as string[]).concat(opts.importPaths ?? []);

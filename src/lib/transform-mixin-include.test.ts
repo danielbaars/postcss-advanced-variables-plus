@@ -4,10 +4,14 @@ import postcssScss from "postcss-scss";
 import plugin from "../index.js";
 
 const run = (input: string) =>
-  postcss([plugin()]).process(input, { from: undefined }).then(r => r.css);
+  postcss([plugin()])
+    .process(input, { from: undefined })
+    .then((r) => r.css);
 
 const runScss = (input: string) =>
-  postcss([plugin()]).process(input, { from: undefined, syntax: postcssScss }).then(r => r.css);
+  postcss([plugin()])
+    .process(input, { from: undefined, syntax: postcssScss })
+    .then((r) => r.css);
 
 describe("mixin argument paren-splitting", () => {
   it("passes var() arg correctly", async () => {

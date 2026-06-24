@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createImportResolver } from "./import-resolver.js";
 import * as fs from "node:fs/promises";
 import path from "node:path";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { createImportResolver } from "./import-resolver.js";
 
 vi.mock("node:fs/promises");
 
@@ -79,7 +79,7 @@ describe("createImportResolver", () => {
     mockReadFile.mockRejectedValue(new Error("ENOENT: no such file"));
     const resolver = createImportResolver();
     await expect(resolver("./missing.css", "/project/styles")).rejects.toThrow(
-      /Failed to resolve CSS import "\.\/missing\.css" from "\/project\/styles"/
+      /Failed to resolve CSS import "\.\/missing\.css" from "\/project\/styles"/,
     );
   });
 });

@@ -1,11 +1,10 @@
-import { list } from "postcss";
+import { list, type AtRule } from "postcss";
+import type { TransformOpts } from "../transform-opts.js";
 import getClosestVariable from "./get-closest-variable.js";
 import getReplacedString from "./get-replaced-string.js";
 import setVariable from "./set-variable.js";
 import manageUnresolved from "./manage-unresolved.js";
 import transformNode from "./transform-node.js";
-import type { AtRule } from "postcss";
-import type { TransformOpts } from "../transform-opts.js";
 import type { WithVariables } from "./get-variables.js";
 
 const getIncludeOpts = (node: AtRule, opts: TransformOpts) => {
@@ -21,14 +20,12 @@ const transformIncludeAtrule = (rule: AtRule, opts: TransformOpts): Promise<void
 
   const { name, args } = getIncludeOpts(rule, opts);
   const mixin = getClosestVariable(`@mixin ${name}`, rule.parent as WithVariables, opts) as
-    | { params: Array<{ name: string; value: string | undefined }>; rule: AtRule }
+    | { params: { name: string; value: string | undefined }[]; rule: AtRule }
     | undefined;
 
   if (mixin) {
     mixin.params.forEach((param, index) => {
-      const arg = index in args
-        ? getReplacedString(args[index]!, rule as unknown as WithVariables, opts)
-        : param.value;
+      const arg = index in args ? getReplacedString(args[index]!, rule as unknown as WithVariables, opts) : param.value;
       if (arg !== undefined) setVariable(rule as unknown as WithVariables, param.name, arg, opts);
     });
 

@@ -8,9 +8,10 @@ const matchTrailingComma = /\s*,\s*$/;
 const getValueAsObject = (value: string): VariableValue => {
   const hasWrappingParens = matchWrappingParens.test(value);
   matchWrappingParens.lastIndex = 0;
-  const unwrappedValue = String(
-    hasWrappingParens ? value.replace(matchWrappingParens, "$1") : value
-  ).replace(matchTrailingComma, "");
+  const unwrappedValue = String(hasWrappingParens ? value.replace(matchWrappingParens, "$1") : value).replace(
+    matchTrailingComma,
+    "",
+  );
   const separatedValue = list.comma(unwrappedValue);
   const firstValue = separatedValue[0];
 
@@ -29,9 +30,7 @@ const getValueAsObject = (value: string): VariableValue => {
     }
   });
 
-  return Object.keys(objectValue).length > 0
-    ? Object.assign(objectValue, arrayValue)
-    : arrayValue;
+  return Object.keys(objectValue).length > 0 ? Object.assign(objectValue, arrayValue) : arrayValue;
 };
 
 export default getValueAsObject;

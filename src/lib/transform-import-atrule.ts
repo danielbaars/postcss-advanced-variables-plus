@@ -1,16 +1,15 @@
-import postcss from "postcss";
 import path from "node:path";
+import postcss, { type AtRule, type Plugin, type Container } from "postcss";
+import type { TransformOpts } from "../transform-opts.js";
 import manageUnresolved from "./manage-unresolved.js";
 import getReplacedString from "./get-replaced-string.js";
 import transformNode from "./transform-node.js";
-import type { AtRule } from "postcss";
-import type { TransformOpts } from "../transform-opts.js";
 import type { WithVariables } from "./get-variables.js";
 
 const trimWrappingQuotes = (string: string): string => string.replace(/^("|')([\W\w]*)\1$/, "$2");
 const trimWrappingURL = (string: string): string => trimWrappingQuotes(string.replace(/^url\(([\W\w]*)\)$/, "$1"));
 
-const noopPlugin = (): import("postcss").Plugin => ({ postcssPlugin: "noop-plugin", Once() {} });
+const noopPlugin = (): Plugin => ({ postcssPlugin: "noop-plugin", Once() {} });
 noopPlugin.postcss = true;
 const processor = postcss([noopPlugin()]);
 
@@ -41,28 +40,30 @@ const transformImportAtrule = (rule: AtRule, opts: TransformOpts): Promise<void>
 
   const importPromise = cwds.reduce(
     (promise, thiscwd) => promise.catch(() => opts.importResolve(id, thiscwd)),
-    Promise.reject<{ file: string; contents: string }>()
+    Promise.reject<{ file: string; contents: string }>(),
   );
 
   return importPromise.then(
     ({ file, contents }: { file: string; contents: string }) =>
-      processor.process(contents, { from: file, parser: parser as Parameters<typeof processor.process>[1]["parser"] }).then(({ root }) => {
-        opts.result.messages.push({ type: "dependency", file, parent: cwf ?? "" });
-        const nodes = root.nodes.slice(0);
+      processor
+        .process(contents, { from: file, parser: parser as Parameters<typeof processor.process>[1]["parser"] })
+        .then(({ root }) => {
+          opts.result.messages.push({ type: "dependency", file, parent: cwf ?? "" });
+          const nodes = root.nodes.slice(0);
 
-        if (media) {
-          const mediaRule = postcss.atRule({ name: "media", params: media, source: rule.source });
-          mediaRule.append(nodes);
-          rule.replaceWith(mediaRule);
-        } else {
-          rule.replaceWith(nodes);
-        }
+          if (media) {
+            const mediaRule = postcss.atRule({ name: "media", params: media, source: rule.source });
+            mediaRule.append(nodes);
+            rule.replaceWith(mediaRule);
+          } else {
+            rule.replaceWith(nodes);
+          }
 
-        return transformNode({ nodes } as import("postcss").Container, opts);
-      }),
+          return transformNode({ nodes } as Container, opts);
+        }),
     () => {
       manageUnresolved(rule, opts, "@import", `Could not resolve the @import for "${id}"`);
-    }
+    },
   );
 };
 

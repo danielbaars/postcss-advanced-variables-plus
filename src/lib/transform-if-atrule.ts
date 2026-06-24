@@ -1,8 +1,7 @@
-import { list } from "postcss";
+import { list, type AtRule, type ChildNode } from "postcss";
+import type { TransformOpts } from "../transform-opts.js";
 import getReplacedString from "./get-replaced-string.js";
 import transformNode from "./transform-node.js";
-import type { AtRule, ChildNode } from "postcss";
-import type { TransformOpts } from "../transform-opts.js";
 import type { WithVariables } from "./get-variables.js";
 
 const ifPromise = (condition: unknown, trueFunction: () => Promise<void> | void): Promise<void> =>
@@ -21,13 +20,15 @@ const isIfTruthy = (node: AtRule, opts: TransformOpts): boolean => {
   const operator = params[1];
   const right = getInterprettedString(getReplacedString(params[2] ?? "", node as unknown as WithVariables, opts));
 
-  return (!operator && Boolean(left)) ||
+  return (
+    (!operator && Boolean(left)) ||
     (operator === "==" && left === right) ||
     (operator === "!=" && left !== right) ||
-    (operator === "<"  && (left as number) < (right as number)) ||
+    (operator === "<" && (left as number) < (right as number)) ||
     (operator === "<=" && (left as number) <= (right as number)) ||
-    (operator === ">"  && (left as number) > (right as number)) ||
-    (operator === ">=" && (left as number) >= (right as number));
+    (operator === ">" && (left as number) > (right as number)) ||
+    (operator === ">=" && (left as number) >= (right as number))
+  );
 };
 
 const isElseRule = (node: ChildNode | undefined): boolean =>
@@ -44,16 +45,16 @@ const transformIfAtrule = (rule: AtRule, opts: TransformOpts): Promise<void> | u
   const isTruthy = isIfTruthy(rule, opts);
   const next = rule.next() as AtRule | undefined;
 
-  return ifPromise(
-    true,
-    () => ifPromise(isTruthy, () => transformAndInsertBeforeParent(rule, opts))
-      .then(() => { rule.remove(); })
+  return ifPromise(true, () =>
+    ifPromise(isTruthy, () => transformAndInsertBeforeParent(rule, opts)).then(() => {
+      rule.remove();
+    }),
   ).then(() =>
-    ifPromise(
-      opts.transform.includes("@else") && isElseRule(next),
-      () => ifPromise(!isTruthy, () => transformAndInsertBeforeParent(next!, opts))
-        .then(() => { next!.remove(); })
-    )
+    ifPromise(opts.transform.includes("@else") && isElseRule(next), () =>
+      ifPromise(!isTruthy, () => transformAndInsertBeforeParent(next!, opts)).then(() => {
+        next!.remove();
+      }),
+    ),
   );
 };
 

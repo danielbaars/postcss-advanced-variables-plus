@@ -38,10 +38,7 @@ export const evaluateExpression = (input: string): number | null => {
 
     let numStr = "";
     let hasDot = false;
-    while (
-      pos < s.length &&
-      ((s[pos]! >= "0" && s[pos]! <= "9") || (s[pos] === "." && !hasDot))
-    ) {
+    while (pos < s.length && ((s[pos]! >= "0" && s[pos]! <= "9") || (s[pos] === "." && !hasDot))) {
       if (s[pos] === ".") hasDot = true;
       numStr += s[pos++];
     }

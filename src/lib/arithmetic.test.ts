@@ -5,11 +5,15 @@ import plugin from "../index.js";
 import { evaluateExpression } from "./evaluate-expression.js";
 
 const run = (input: string) =>
-  postcss([plugin()]).process(input, { from: undefined }).then(r => r.css);
+  postcss([plugin()])
+    .process(input, { from: undefined })
+    .then((r) => r.css);
 
 // SCSS parser required when $var declarations appear inside nested blocks
 const runScss = (input: string) =>
-  postcss([plugin()]).process(input, { from: undefined, syntax: postcssScss }).then(r => r.css);
+  postcss([plugin()])
+    .process(input, { from: undefined, syntax: postcssScss })
+    .then((r) => r.css);
 
 // ─── Unit tests for evaluateExpression ───────────────────────────────────────
 
@@ -75,7 +79,7 @@ describe("evaluateExpression", () => {
 
 describe("arithmetic in variable assignment (issue #98)", () => {
   it("evaluates arithmetic before storing a variable", async () => {
-    const result = await run(`$x: (3 * 2) - 1; a { order: $x; }`);
+    const result = await run("$x: (3 * 2) - 1; a { order: $x; }");
     expect(result).toContain("order: 5");
   });
 

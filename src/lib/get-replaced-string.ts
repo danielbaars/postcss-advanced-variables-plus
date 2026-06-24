@@ -1,14 +1,16 @@
+import type { TransformOpts } from "../transform-opts.js";
 import getClosestVariable from "./get-closest-variable.js";
 import manageUnresolved from "./manage-unresolved.js";
 import type { WithVariables, VariableValue } from "./get-variables.js";
-import type { TransformOpts } from "../transform-opts.js";
 
 const matchVariables = /(.?)(?:\$([A-Za-z][\w-]*)|\$\(([A-Za-z][\w-]*)\)|#\{\$([A-Za-z][\w-]*)\})/g;
 
 const stringify = (object: VariableValue): string => {
   if (Array.isArray(object)) return `(${object.map(stringify).join(",")})`;
   if (typeof object === "object" && object !== null) {
-    return `(${Object.keys(object).map(key => `${key}:${stringify((object as Record<string, VariableValue>)[key])}`).join(",")})`;
+    return `(${Object.keys(object)
+      .map((key) => `${key}:${stringify((object as Record<string, VariableValue>)[key])}`)
+      .join(",")})`;
   }
   return String(object);
 };

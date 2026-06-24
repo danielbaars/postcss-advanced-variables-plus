@@ -5,15 +5,19 @@ import plugin from "../index.js";
 
 // Standard CSS parser — works for plain $var and #{} in at-rule params
 const run = (input: string) =>
-  postcss([plugin()]).process(input, { from: undefined }).then(r => r.css);
+  postcss([plugin()])
+    .process(input, { from: undefined })
+    .then((r) => r.css);
 
 // SCSS parser — required for #{} in property names, values, and selectors
 const runScss = (input: string) =>
-  postcss([plugin()]).process(input, { from: undefined, syntax: postcssScss }).then(r => r.css);
+  postcss([plugin()])
+    .process(input, { from: undefined, syntax: postcssScss })
+    .then((r) => r.css);
 
 describe("variable interpolation", () => {
   it("interpolates #{$var} in a CSS custom property name (requires SCSS parser)", async () => {
-    const result = await runScss(`$n: foo; a { --#{$n}: 1; }`);
+    const result = await runScss("$n: foo; a { --#{$n}: 1; }");
     expect(result).toContain("--foo: 1");
   });
 
@@ -31,7 +35,7 @@ describe("variable interpolation", () => {
   });
 
   it("interpolates #{$var} in a declaration value (requires SCSS parser)", async () => {
-    const result = await runScss(`$n: red; a { color: #{$n}; }`);
+    const result = await runScss("$n: red; a { color: #{$n}; }");
     expect(result).toContain("color: red");
   });
 
@@ -56,13 +60,13 @@ describe("variable interpolation", () => {
   });
 
   it("interpolates #{$n} in @each-generated selectors", async () => {
-    const result = await runScss(`@each $n in a, b { .#{$n}-item { color: red; } }`);
+    const result = await runScss("@each $n in a, b { .#{$n}-item { color: red; } }");
     expect(result).toContain(".a-item");
     expect(result).toContain(".b-item");
   });
 
   it("interpolates #{$bp} in @media params (works with standard CSS parser)", async () => {
-    const result = await run(`$bp: 600px; @media (min-width: #{$bp}) { a { color: red; } }`);
+    const result = await run("$bp: 600px; @media (min-width: #{$bp}) { a { color: red; } }");
     expect(result).toContain("@media (min-width: 600px)");
   });
 });
