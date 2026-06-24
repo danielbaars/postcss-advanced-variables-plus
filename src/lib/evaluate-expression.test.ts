@@ -15,8 +15,6 @@ const runScss = (input: string) =>
     .process(input, { from: undefined, syntax: postcssScss })
     .then((r) => r.css);
 
-// ─── Unit tests for evaluateExpression ───────────────────────────────────────
-
 describe("evaluateExpression", () => {
   it("evaluates a bare integer", () => {
     expect(evaluateExpression("1")).toBe(1);
@@ -54,12 +52,24 @@ describe("evaluateExpression", () => {
     expect(evaluateExpression("0 / span 3")).toBeNull();
   });
 
-  it("returns null for unclosed parenthesis", () => {
+  it("returns null for unclosed parenthesis with incomplete inner expression", () => {
     expect(evaluateExpression("(1 + ")).toBeNull();
+  });
+
+  it("returns null for unclosed parenthesis with complete inner expression", () => {
+    expect(evaluateExpression("(1 + 2")).toBeNull();
   });
 
   it("returns null for division by zero", () => {
     expect(evaluateExpression("1 / 0")).toBeNull();
+  });
+
+  it("returns null for modulo by zero", () => {
+    expect(evaluateExpression("10 % 0")).toBeNull();
+  });
+
+  it("returns null for unary minus applied to an invalid expression", () => {
+    expect(evaluateExpression("-")).toBeNull();
   });
 
   it("returns null for empty string", () => {
@@ -74,8 +84,6 @@ describe("evaluateExpression", () => {
     expect(evaluateExpression("1 + 2 abc")).toBeNull();
   });
 });
-
-// ─── Integration tests ────────────────────────────────────────────────────────
 
 describe("arithmetic in variable assignment (issue #98)", () => {
   it("evaluates arithmetic before storing a variable", async () => {
@@ -113,7 +121,7 @@ describe("arithmetic in variable assignment (issue #98)", () => {
 
 describe("arithmetic in @for bounds (issue #65)", () => {
   it("evaluates an arithmetic expression as @for end bound", async () => {
-    // $a + $b = 2 + 3 = 5; loop runs through 5 (current @for treats through/to as inclusive)
+    // "through" is inclusive, so the loop ends at 5 (not 6)
     const result = await runScss(`
       $a: 2;
       $b: 3;
@@ -127,7 +135,6 @@ describe("arithmetic in @for bounds (issue #65)", () => {
   });
 
   it("evaluates arithmetic @for bound from @each loop variable", async () => {
-    // $a iterates 1, 2; @for end = $a + 3 = 4 then 5
     const result = await runScss(`
       @each $a in 1, 2 {
         @for $c from 1 through ($a + 3) {
@@ -135,11 +142,11 @@ describe("arithmetic in @for bounds (issue #65)", () => {
         }
       }
     `);
-    // $a=1: ($a+3)=4 → .item-1-1 through .item-1-4
+
     expect(result).toContain(".item-1-1");
     expect(result).toContain(".item-1-4");
     expect(result).not.toContain(".item-1-5");
-    // $a=2: ($a+3)=5 → .item-2-1 through .item-2-5
+
     expect(result).toContain(".item-2-1");
     expect(result).toContain(".item-2-5");
     expect(result).not.toContain(".item-2-6");

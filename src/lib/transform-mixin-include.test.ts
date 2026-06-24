@@ -79,7 +79,7 @@ describe("mixin argument paren-splitting", () => {
     expect(result).toContain("color: var(--color)");
   });
 
-  it("no-arg include still works", async () => {
+  it("uses the default parameter value when called without arguments", async () => {
     const result = await run(`
       @mixin foo($c: red) { color: $c; }
       a { @include foo; }

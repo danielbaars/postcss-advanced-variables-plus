@@ -5,7 +5,8 @@ import { createImportResolver } from "./import-resolver.js";
 
 vi.mock("node:fs/promises");
 
-const mockReadFile = vi.mocked(fs.readFile);
+// readFile is overloaded; narrow to the utf8-encoding overload actually used by the resolver
+const mockReadFile = vi.mocked(fs.readFile as (path: string, encoding: string) => Promise<string>);
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -15,7 +16,7 @@ const CSS_CONTENT = "body { color: red; }";
 
 describe("createImportResolver", () => {
   it("resolves a relative path", async () => {
-    mockReadFile.mockResolvedValue(CSS_CONTENT as never);
+    mockReadFile.mockResolvedValue(CSS_CONTENT);
     const resolver = createImportResolver();
     const cwd = "/project/styles";
     const result = await resolver("./foo.css", cwd);
@@ -24,7 +25,7 @@ describe("createImportResolver", () => {
   });
 
   it("resolves an absolute path", async () => {
-    mockReadFile.mockResolvedValue(CSS_CONTENT as never);
+    mockReadFile.mockResolvedValue(CSS_CONTENT);
     const resolver = createImportResolver();
     const result = await resolver("/absolute/path/to/tokens.css", "/any/cwd");
     expect(result.file).toBe("/absolute/path/to/tokens.css");
@@ -32,7 +33,7 @@ describe("createImportResolver", () => {
   });
 
   it("resolves an alias exact match", async () => {
-    mockReadFile.mockResolvedValue(CSS_CONTENT as never);
+    mockReadFile.mockResolvedValue(CSS_CONTENT);
     const resolver = createImportResolver({
       aliases: { "@tokens": "/path/to/tokens.css" },
     });
@@ -42,7 +43,7 @@ describe("createImportResolver", () => {
   });
 
   it("resolves an alias prefix match", async () => {
-    mockReadFile.mockResolvedValue(CSS_CONTENT as never);
+    mockReadFile.mockResolvedValue(CSS_CONTENT);
     const resolver = createImportResolver({
       aliases: { "@tokens": "/path/to/tokens" },
     });
@@ -52,7 +53,7 @@ describe("createImportResolver", () => {
   });
 
   it("longest alias wins when multiple aliases could match", async () => {
-    mockReadFile.mockResolvedValue(CSS_CONTENT as never);
+    mockReadFile.mockResolvedValue(CSS_CONTENT);
     const resolver = createImportResolver({
       aliases: {
         "@tokens": "/short",
@@ -66,7 +67,7 @@ describe("createImportResolver", () => {
   });
 
   it("resolves a package specifier via import.meta.resolve", async () => {
-    mockReadFile.mockResolvedValue(CSS_CONTENT as never);
+    mockReadFile.mockResolvedValue(CSS_CONTENT);
     const resolver = createImportResolver({
       resolveId: () => "file:///node_modules/some-package/index.css",
     });
