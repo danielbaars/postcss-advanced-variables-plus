@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.3.0 — 2026-06-24
+
+### New features
+
+- **Arithmetic expressions are now evaluated** — variable values containing pure arithmetic (integers, floats, `+`, `-`, `*`, `/`, `%`, parentheses) are computed at assignment time. Closes csstools/postcss-advanced-variables#98 and #65.
+
+  ```css
+  $span: 3;
+  @for $i from 1 through 2 {
+    $start: (($i - 1) * $span);
+    .col-#{$i} { grid-column: $start / span $span; }
+  }
+  /* → .col-1 { grid-column: 0 / span 3; }
+        .col-2 { grid-column: 3 / span 3; } */
+  ```
+
+  Arithmetic expressions used as `@for` loop bounds are also evaluated:
+
+  ```css
+  $a: 2; $b: 3;
+  @for $c from 1 through ($a + $b) { /* loops 1–5 */ }
+  ```
+
+  Non-numeric values (CSS units, keywords, un-substituted variables) are passed through unchanged.
+
+---
+
 ## 1.2.0 — 2026-06-24
 
 ### Bug fixes

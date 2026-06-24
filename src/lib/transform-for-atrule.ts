@@ -2,17 +2,24 @@ import getReplacedString from "./get-replaced-string.js";
 import setVariable from "./set-variable.js";
 import waterfall from "./waterfall.js";
 import transformNode from "./transform-node.js";
+import evaluateExpression from "./evaluate-expression.js";
 import { list } from "postcss";
 import type { AtRule } from "postcss";
 import type { TransformOpts } from "../transform-opts.js";
 import type { WithVariables } from "./get-variables.js";
 
+const resolveNumber = (raw: string, node: AtRule, opts: TransformOpts): number => {
+  const str = getReplacedString(raw, node as unknown as WithVariables, opts);
+  const n = evaluateExpression(str);
+  return n !== null ? n : Number(str);
+};
+
 const getForOpts = (node: AtRule, opts: TransformOpts) => {
   const params = list.space(node.params);
   const varname = params[0]!.trim().slice(1);
-  const start = Number(getReplacedString(params[2]!, node as unknown as WithVariables, opts));
-  const end = Number(getReplacedString(params[4]!, node as unknown as WithVariables, opts));
-  const increment = params[6] !== undefined ? Number(getReplacedString(params[6], node as unknown as WithVariables, opts)) : 1;
+  const start     = resolveNumber(params[2]!, node, opts);
+  const end       = resolveNumber(params[4]!, node, opts);
+  const increment = params[6] !== undefined ? resolveNumber(params[6], node, opts) : 1;
   return { varname, start, end, increment };
 };
 
