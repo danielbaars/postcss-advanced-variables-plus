@@ -1,10 +1,10 @@
 # Changelog
 
-## Unreleased
+## [1.4.3](https://github.com/danielbaars/postcss-advanced-variables-plus/compare/v1.4.2...v1.4.3) (2026-06-25)
 
 ### Bug Fixes
 
-- **Sass-style `@each` map syntax now works** — `@each $key, $value in (...)` assigns map keys to the first variable and values to the second. The legacy space-separated syntax (`@each $value $key in (...)`) remains supported for backwards compatibility. Quoted map keys such as `("one": "1")` are now parsed as keys.
+- support Sass-style [@each](https://github.com/each) map syntax ([461d3ce](https://github.com/danielbaars/postcss-advanced-variables-plus/commit/461d3ce553a7b2f5070183f49202a91eb2b37d9b))
 
 ## [1.4.2](https://github.com/danielbaars/postcss-advanced-variables-plus/compare/v1.4.1...v1.4.2) (2026-06-25)
 
