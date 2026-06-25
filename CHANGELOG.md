@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/danielbaars/postcss-advanced-variables-plus/compare/v1.4.1...v1.4.2) (2026-06-25)
+
+
+### Bug Fixes
+
+* support Tailwind 4 PostCSS ordering ([ef12e10](https://github.com/danielbaars/postcss-advanced-variables-plus/commit/ef12e10938b4d42df2a7c57573d055538d225f2b))
+
 ## [1.4.1](https://github.com/danielbaars/postcss-advanced-variables-plus/compare/v1.4.0...v1.4.1) (2026-06-25)
 
 
