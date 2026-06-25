@@ -28,13 +28,11 @@ npm install postcss
 
 ```js
 // postcss.config.js
-import advancedVariables from 'postcss-advanced-variables-plus'
+import advancedVariables from "postcss-advanced-variables-plus";
 
 export default {
-  plugins: [
-    advancedVariables()
-  ]
-}
+  plugins: [advancedVariables()],
+};
 ```
 
 ### `#{}` interpolation in selectors and property names
@@ -46,12 +44,12 @@ npm install postcss-scss
 ```
 
 ```js
-import postcssScss from 'postcss-scss'
+import postcssScss from "postcss-scss";
 
 export default {
   syntax: postcssScss,
-  plugins: [advancedVariables()]
-}
+  plugins: [advancedVariables()],
+};
 ```
 
 ```css
@@ -75,44 +73,79 @@ $layers: alpha, beta, gamma;
 ```css
 /* works without postcss-scss */
 $bp: 600px;
-@media (min-width: #{$bp}) { }
+@media (min-width: #{$bp}) {
+}
+```
+
+### `@each` over lists and maps
+
+Lists can expose the current value and optional numeric index:
+
+```css
+@each $name, $index in (sm, md, lg) {
+  .size-$index {
+    content: "$name";
+  }
+}
+/* → .size-0 { content: "sm"; } ... */
+```
+
+Maps use Sass-style comma syntax: the first variable receives the key, the second receives the value. Quoted keys are supported.
+
+```css
+$colors: ("brand": #0a66ff, "accent": #f43f5e);
+
+@each $name, $value in $colors {
+  .text-$name {
+    color: $value;
+  }
+}
+/* → .text-brand { color: #0a66ff; } ... */
+```
+
+For backwards compatibility, the legacy space-separated map syntax is still supported with the original order: value first, key second.
+
+```css
+@each $value $name in $colors {
+  .text-$name {
+    color: $value;
+  }
+}
 ```
 
 ### With Vite aliases
 
 ```js
 // vite.config.js
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 
 const aliases = {
-  '@styles': '/src/styles',
-  '@tokens': '/src/tokens',
-}
+  "@styles": "/src/styles",
+  "@tokens": "/src/tokens",
+};
 
 export default defineConfig({
   resolve: { alias: aliases },
   css: {
     postcss: {
-      plugins: [
-        advancedVariables({ aliases })
-      ]
-    }
-  }
-})
+      plugins: [advancedVariables({ aliases })],
+    },
+  },
+});
 ```
 
 ## Options
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `variables` | `VariableMap \| (name, node) => value` | `{}` | Additional variables available to all files |
-| `unresolved` | `"throw" \| "warn" \| "ignore"` | `"throw"` | Behaviour when a variable reference cannot be resolved |
-| `disable` | `string` | — | Space-separated list of at-rules to disable (e.g. `"@if @for"`) |
-| `importPaths` | `string[]` | `[]` | Additional directories to search when resolving `@import` |
-| `importResolve` | `(id, cwd) => Promise<{ file, contents }>` | built-in resolver | Override the file resolver entirely |
-| `importFilter` | `((id, media) => boolean) \| RegExp` | — | Predicate to skip specific `@import` paths |
-| `importRoot` | `string` | `process.cwd()` | Root directory for resolving bare imports |
-| `aliases` | `Record<string, string>` | `{}` | Path aliases forwarded to the built-in resolver |
+| Option          | Type                                       | Default           | Description                                                     |
+| --------------- | ------------------------------------------ | ----------------- | --------------------------------------------------------------- |
+| `variables`     | `VariableMap \| (name, node) => value`     | `{}`              | Additional variables available to all files                     |
+| `unresolved`    | `"throw" \| "warn" \| "ignore"`            | `"throw"`         | Behaviour when a variable reference cannot be resolved          |
+| `disable`       | `string`                                   | —                 | Space-separated list of at-rules to disable (e.g. `"@if @for"`) |
+| `importPaths`   | `string[]`                                 | `[]`              | Additional directories to search when resolving `@import`       |
+| `importResolve` | `(id, cwd) => Promise<{ file, contents }>` | built-in resolver | Override the file resolver entirely                             |
+| `importFilter`  | `((id, media) => boolean) \| RegExp`       | —                 | Predicate to skip specific `@import` paths                      |
+| `importRoot`    | `string`                                   | `process.cwd()`   | Root directory for resolving bare imports                       |
+| `aliases`       | `Record<string, string>`                   | `{}`              | Path aliases forwarded to the built-in resolver                 |
 
 ### `aliases` in detail
 
@@ -120,7 +153,7 @@ Aliases are resolved using longest-prefix matching, the same strategy Vite uses.
 
 ```css
 /* with aliases: { '@styles': '/src/styles' } */
-@import '@styles/button.css';
+@import "@styles/button.css";
 /* resolves to /src/styles/button.css */
 ```
 
@@ -129,32 +162,32 @@ Aliases are resolved using longest-prefix matching, the same strategy Vite uses.
 When you need full control over specifier resolution without replacing the entire `importResolve` function, call `createImportResolver` directly:
 
 ```js
-import advancedVariables, { createImportResolver } from 'postcss-advanced-variables-plus'
+import advancedVariables, { createImportResolver } from "postcss-advanced-variables-plus";
 
 const resolve = createImportResolver({
-  aliases: { '@styles': '/src/styles' },
+  aliases: { "@styles": "/src/styles" },
   // Supply Vite's resolver instead of import.meta.resolve:
   resolveId: (id, base) => viteDevServer.moduleGraph.resolveUrl(id),
-})
+});
 
-advancedVariables({ importResolve: resolve })
+advancedVariables({ importResolve: resolve });
 ```
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `aliases` | `Record<string, string>` | `{}` | Path aliases |
+| Option      | Type                                   | Default               | Description                    |
+| ----------- | -------------------------------------- | --------------------- | ------------------------------ |
+| `aliases`   | `Record<string, string>`               | `{}`                  | Path aliases                   |
 | `resolveId` | `(id: string, base: string) => string` | `import.meta.resolve` | Specifier-to-file-URL resolver |
 
 ## Differences from the original
 
-| | `postcss-advanced-variables` | `postcss-advanced-variables-plus` |
-|---|---|---|
-| Source language | JavaScript | TypeScript (strict) |
-| Resolver | `@csstools/sass-import-resolve` | Built-in; uses `import.meta.resolve` |
-| pnpm / `exports` map support | No | Yes |
-| `aliases` option | No | Yes |
-| Module format | CJS + ESM | ESM only |
-| Node requirement | ≥ 12 | ≥ 18 |
+|                              | `postcss-advanced-variables`    | `postcss-advanced-variables-plus`    |
+| ---------------------------- | ------------------------------- | ------------------------------------ |
+| Source language              | JavaScript                      | TypeScript (strict)                  |
+| Resolver                     | `@csstools/sass-import-resolve` | Built-in; uses `import.meta.resolve` |
+| pnpm / `exports` map support | No                              | Yes                                  |
+| `aliases` option             | No                              | Yes                                  |
+| Module format                | CJS + ESM                       | ESM only                             |
+| Node requirement             | ≥ 12                            | ≥ 18                                 |
 
 ## Migration from `postcss-advanced-variables`
 
@@ -168,9 +201,9 @@ This package is a drop-in replacement. All existing options work identically.
 2. Update imports:
    ```js
    // before
-   import advancedVariables from 'postcss-advanced-variables'
+   import advancedVariables from "postcss-advanced-variables";
    // after
-   import advancedVariables from 'postcss-advanced-variables-plus'
+   import advancedVariables from "postcss-advanced-variables-plus";
    ```
 3. If you were passing a custom `importResolve`, it continues to work unchanged.
 4. If you relied on `@csstools/sass-import-resolve` behaviour for bare `@import` paths (e.g. `@import "bootstrap"`) you may need to add the relevant directory to `importPaths`, or configure `aliases`.

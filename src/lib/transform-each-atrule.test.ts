@@ -24,6 +24,17 @@ describe("transformEachAtrule", () => {
       expect(result).toContain("content: b");
       expect(result).toContain("content: c");
     });
+
+    it("supports comma syntax for list values and indexes", async () => {
+      const result = await run('@each $v, $i in (a, b, c) { .item-$i { content: "$v"; } }');
+
+      expect(result).toContain(".item-0");
+      expect(result).toContain(".item-1");
+      expect(result).toContain(".item-2");
+      expect(result).toContain('content: "a"');
+      expect(result).toContain('content: "b"');
+      expect(result).toContain('content: "c"');
+    });
   });
 
   describe("single bare value", () => {
@@ -55,6 +66,33 @@ describe("transformEachAtrule", () => {
 
       expect(result).toContain("x: red");
       expect(result).toContain("x: 10");
+    });
+
+    it("supports Sass comma syntax for map keys and values", async () => {
+      const result = await run('@each $key, $value in (one: "1", two: "2") { .prop-$key { x: $value; } }');
+
+      expect(result).toContain(".prop-one");
+      expect(result).toContain(".prop-two");
+      expect(result).toContain('x: "1"');
+      expect(result).toContain('x: "2"');
+    });
+
+    it("keeps legacy space syntax as value then key for map iteration", async () => {
+      const result = await run('@each $value $key in (one: "1", two: "2") { .prop-$key { x: $value; } }');
+
+      expect(result).toContain(".prop-one");
+      expect(result).toContain(".prop-two");
+      expect(result).toContain('x: "1"');
+      expect(result).toContain('x: "2"');
+    });
+
+    it("supports quoted map keys in Sass comma syntax", async () => {
+      const result = await run('@each $key, $value in ("one": "1", "two": "2") { .prop-$key { x: $value; } }');
+
+      expect(result).toContain(".prop-one");
+      expect(result).toContain(".prop-two");
+      expect(result).toContain('x: "1"');
+      expect(result).toContain('x: "2"');
     });
   });
 

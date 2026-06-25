@@ -2,7 +2,7 @@ import { list } from "postcss";
 import type { VariableValue, VariableMap } from "./get-variables.js";
 
 const matchWrappingParens = /^\(([\W\w]*)\)$/g;
-const matchDeclaration = /^([\w-]+)\s*:\s*([\W\w]+)\s*$/;
+const matchDeclaration = /^["']?([\w-]+)["']?\s*:\s*([\W\w]+)\s*$/;
 const matchTrailingComma = /\s*,\s*$/;
 
 export const getValueAsObject = (value: string): VariableValue => {

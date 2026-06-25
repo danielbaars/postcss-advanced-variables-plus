@@ -1,18 +1,22 @@
 # Changelog
 
-## [1.4.2](https://github.com/danielbaars/postcss-advanced-variables-plus/compare/v1.4.1...v1.4.2) (2026-06-25)
-
+## Unreleased
 
 ### Bug Fixes
 
-* support Tailwind 4 PostCSS ordering ([ef12e10](https://github.com/danielbaars/postcss-advanced-variables-plus/commit/ef12e10938b4d42df2a7c57573d055538d225f2b))
+- **Sass-style `@each` map syntax now works** — `@each $key, $value in (...)` assigns map keys to the first variable and values to the second. The legacy space-separated syntax (`@each $value $key in (...)`) remains supported for backwards compatibility. Quoted map keys such as `("one": "1")` are now parsed as keys.
+
+## [1.4.2](https://github.com/danielbaars/postcss-advanced-variables-plus/compare/v1.4.1...v1.4.2) (2026-06-25)
+
+### Bug Fixes
+
+- support Tailwind 4 PostCSS ordering ([ef12e10](https://github.com/danielbaars/postcss-advanced-variables-plus/commit/ef12e10938b4d42df2a7c57573d055538d225f2b))
 
 ## [1.4.1](https://github.com/danielbaars/postcss-advanced-variables-plus/compare/v1.4.0...v1.4.1) (2026-06-25)
 
-
 ### Bug Fixes
 
-* trigger patch release ([aaa9878](https://github.com/danielbaars/postcss-advanced-variables-plus/commit/aaa987826cc6de46dcb74ba65b67382aaa510345))
+- trigger patch release ([aaa9878](https://github.com/danielbaars/postcss-advanced-variables-plus/commit/aaa987826cc6de46dcb74ba65b67382aaa510345))
 
 ## 1.4.0 — 2026-06-24
 
@@ -51,8 +55,11 @@
   Arithmetic expressions used as `@for` loop bounds are also evaluated:
 
   ```css
-  $a: 2; $b: 3;
-  @for $c from 1 through ($a + $b) { /* loops 1–5 */ }
+  $a: 2;
+  $b: 3;
+  @for $c from 1 through ($a + $b) {
+    /* loops 1–5 */
+  }
   ```
 
   Non-numeric values (CSS units, keywords, un-substituted variables) are passed through unchanged.
