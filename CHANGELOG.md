@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/danielbaars/postcss-advanced-variables-plus/compare/v1.4.0...v1.4.1) (2026-06-25)
+
+
+### Bug Fixes
+
+* trigger patch release ([aaa9878](https://github.com/danielbaars/postcss-advanced-variables-plus/commit/aaa987826cc6de46dcb74ba65b67382aaa510345))
+
 ## 1.4.0 — 2026-06-24
 
 ### Bug fixes
