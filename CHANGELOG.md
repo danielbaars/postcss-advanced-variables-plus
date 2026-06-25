@@ -2,6 +2,13 @@
 
 ## [1.4.3](https://github.com/danielbaars/postcss-advanced-variables-plus/compare/v1.4.2...v1.4.3) (2026-06-25)
 
+
+### Bug Fixes
+
+* support Sass-style [@each](https://github.com/each) map syntax ([461d3ce](https://github.com/danielbaars/postcss-advanced-variables-plus/commit/461d3ce553a7b2f5070183f49202a91eb2b37d9b))
+
+## [1.4.3](https://github.com/danielbaars/postcss-advanced-variables-plus/compare/v1.4.2...v1.4.3) (2026-06-25)
+
 ### Bug Fixes
 
 - support Sass-style [@each](https://github.com/each) map syntax ([461d3ce](https://github.com/danielbaars/postcss-advanced-variables-plus/commit/461d3ce553a7b2f5070183f49202a91eb2b37d9b))
