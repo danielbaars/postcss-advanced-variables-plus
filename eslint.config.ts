@@ -6,7 +6,7 @@ import prettierConfig from "eslint-config-prettier";
 import globals from "globals";
 
 export default tseslint.config(
-  { ignores: ["**/dist", "**/node_modules", "**/coverage"] },
+  { ignores: ["**/dist", "**/node_modules", "**/coverage", "**/.tmp"] },
 
   js.configs.recommended,
 
@@ -89,6 +89,15 @@ export default tseslint.config(
     files: ["src/index.ts", "*.config.ts"],
     rules: {
       "import-x/no-default-export": "off",
+    },
+  },
+
+  {
+    // The real Vite/Tailwind integration fixture uses dynamic imports for packages
+    // whose resolver metadata currently trips import-x's cycle analyzer.
+    files: ["src/tailwind-vite-integration.test.ts"],
+    rules: {
+      "import-x/no-cycle": "off",
     },
   },
 );

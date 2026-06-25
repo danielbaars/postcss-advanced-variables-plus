@@ -14,7 +14,7 @@ const allFeatures = ["@content", "@each", "@else", "@if", "@include", "@import",
 
 const plugin = (opts: PluginOptions = {}): Plugin => ({
   postcssPlugin: "postcss-advanced-variables-plus",
-  Root(root, { result }) {
+  Once(root, { result }) {
     const disabledFeatures = String(opts.disable ?? "").split(/\s*,\s*|\s+,?\s*|\s,?\s+/);
     const transform = allFeatures.filter((f) => !disabledFeatures.includes(f));
     const unresolved = opts.unresolved ?? "throw";

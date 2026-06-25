@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import postcss from "postcss";
+import postcss, { type Plugin as PostcssPlugin, type Root } from "postcss";
 import plugin from "./index.js";
 
 const compile = (css: string, opts = {}) =>
@@ -12,6 +12,22 @@ describe("postcss-advanced-variables-plus", () => {
     expect(plugin.postcss).toBe(true);
     const instance = plugin();
     expect(instance.postcssPlugin).toBe("postcss-advanced-variables-plus");
+  });
+
+  it("transforms before later Once plugins when configured first", async () => {
+    let seenByLaterOncePlugin = "";
+    const laterOncePlugin: PostcssPlugin = {
+      postcssPlugin: "later-once-plugin",
+      Once(root: Root) {
+        seenByLaterOncePlugin = root.toString();
+      },
+    };
+
+    await postcss([plugin(), laterOncePlugin]).process("@mixin full-size { width: 100%; } .x { @include full-size; }", {
+      from: undefined,
+    });
+
+    expect(seenByLaterOncePlugin).toBe(".x { width: 100%; }");
   });
 
   describe("variables", () => {
