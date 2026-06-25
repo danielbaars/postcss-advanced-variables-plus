@@ -5,7 +5,7 @@ export type ImportResolve = (id: string, cwd: string) => Promise<ImportResolutio
 export type ImportFilter = ((id: string, media: string) => boolean) | RegExp;
 
 export type PluginOptions = {
-  variables?: VariableMap | ((name: string, node: WithVariables) => VariableValue | undefined);
+  variables?: VariableMap | ((name: string, node: WithVariables) => VariableValue | undefined) | undefined;
   unresolved?: "throw" | "warn" | "ignore";
   disable?: string;
   importPaths?: string[];

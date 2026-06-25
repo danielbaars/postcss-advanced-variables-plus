@@ -1,8 +1,8 @@
 import { list, type AtRule } from "postcss";
 import type { TransformOpts } from "../transform-opts.js";
-import getReplacedString from "./get-replaced-string.js";
-import setVariable from "./set-variable.js";
-import type { WithVariables, VariableValue } from "./get-variables.js";
+import { getReplacedString } from "./get-replaced-string.js";
+import { setVariable } from "./set-variable.js";
+import type { VariableValue } from "./get-variables.js";
 
 type MixinParam = { name: string; value: string | undefined };
 
@@ -14,21 +14,19 @@ const getMixinOpts = (node: AtRule, opts: TransformOpts) => {
     ? list.comma(rawParams).map((param) => {
         const parts = list.split(param, [":"], true);
         const paramName = parts[0]!.slice(1);
-        const paramValue =
-          parts.length > 1
-            ? getReplacedString(parts.slice(1).join(":"), node as unknown as WithVariables, opts)
-            : undefined;
+        const paramValue = parts.length > 1 ? getReplacedString(parts.slice(1).join(":"), node, opts) : undefined;
         return { name: paramName, value: paramValue };
       })
     : [];
   return { name, params };
 };
 
-const transformMixinAtrule = (rule: AtRule, opts: TransformOpts): void => {
+export const transformMixinAtrule = (rule: AtRule, opts: TransformOpts): void => {
   if (!opts.transform.includes("@mixin")) return;
+  const parent = rule.parent;
+  if (!parent) return;
   const { name, params } = getMixinOpts(rule, opts);
-  setVariable(rule.parent as WithVariables, `@mixin ${name}`, { params, rule } as unknown as VariableValue, opts);
+  // Store mixin definition as VariableValue; retrieved and cast back in transform-include-atrule.
+  setVariable(parent, `@mixin ${name}`, { params, rule } as unknown as VariableValue, opts);
   rule.remove();
 };
-
-export default transformMixinAtrule;

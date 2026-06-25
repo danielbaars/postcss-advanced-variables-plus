@@ -2,7 +2,7 @@ import type { Node, Result } from "postcss";
 
 export type UnresolvedBehavior = "throw" | "warn" | "ignore";
 
-const manageUnresolved = (
+export const manageUnresolved = (
   node: Node,
   opts: { unresolved: UnresolvedBehavior; result: Result },
   word: string,
@@ -14,5 +14,3 @@ const manageUnresolved = (
     throw node.error(message, { word });
   }
 };
-
-export default manageUnresolved;

@@ -78,7 +78,17 @@ export default tseslint.config(
       "no-duplicate-imports": "off",
       "import-x/no-duplicates": ["error", { "prefer-inline": true }],
       "import-x/order": ["warn"],
+      "import-x/no-default-export": "error",
+      "import-x/no-cycle": "error",
       quotes: ["warn", "double", { avoidEscape: true }],
+    },
+  },
+
+  {
+    // PostCSS plugin convention requires a default export; config files use framework conventions.
+    files: ["src/index.ts", "*.config.ts"],
+    rules: {
+      "import-x/no-default-export": "off",
     },
   },
 );

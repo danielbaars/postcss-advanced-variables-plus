@@ -1,11 +1,10 @@
 import type { AtRule, ChildNode } from "postcss";
 import type { TransformOpts } from "../transform-opts.js";
-import getReplacedString from "./get-replaced-string.js";
-import getValueAsObject from "./get-value-as-object.js";
-import setVariable from "./set-variable.js";
-import waterfall from "./waterfall.js";
-import transformNode from "./transform-node.js";
-import type { WithVariables, VariableValue, VariableMap } from "./get-variables.js";
+import { getReplacedString } from "./get-replaced-string.js";
+import { getValueAsObject } from "./get-value-as-object.js";
+import { setVariable } from "./set-variable.js";
+import { transformNode } from "./transform-node.js";
+import type { VariableValue, VariableMap } from "./get-variables.js";
 
 const matchInOperator = " in ";
 
@@ -14,39 +13,30 @@ const getEachOpts = (node: AtRule, opts: TransformOpts) => {
   const args = (params[0] ?? "").trim().split(" ");
   const varname = args[0]!.trim().slice(1);
   const incname = args.length > 1 ? args[1]!.trim().slice(1) : undefined;
-  const rawlist = getValueAsObject(
-    getReplacedString(params.slice(1).join(matchInOperator), node as unknown as WithVariables, opts),
-  );
+  const rawlist = getValueAsObject(getReplacedString(params.slice(1).join(matchInOperator), node, opts));
   const resolvedList = typeof rawlist === "string" ? [rawlist] : rawlist;
   return { varname, incname, list: resolvedList as VariableMap | VariableValue[] };
 };
 
-const transformEachAtrule = (rule: AtRule, opts: TransformOpts): Promise<void> | undefined => {
-  if (!opts.transform.includes("@each")) return undefined;
+export const transformEachAtrule = async (rule: AtRule, opts: TransformOpts): Promise<void> => {
+  if (!opts.transform.includes("@each")) return;
+
+  const parent = rule.parent;
+  if (!parent) return;
 
   const { varname, incname, list: eachList } = getEachOpts(rule, opts);
   const replacements: ChildNode[] = [];
-  const ruleClones: AtRule[] = [];
 
-  Object.keys(eachList).forEach((key) => {
-    setVariable(rule as unknown as WithVariables, varname, (eachList as VariableMap)[key]!, opts);
-    if (incname) setVariable(rule as unknown as WithVariables, incname, key, opts);
-
+  for (const key of Object.keys(eachList)) {
+    setVariable(rule, varname, (eachList as VariableMap)[key]!, opts);
+    if (incname) setVariable(rule, incname, key, opts);
     const clone = rule.clone() as AtRule;
-    clone.parent = rule.parent ?? undefined;
-    (clone as unknown as WithVariables).variables = Object.assign({}, (rule as unknown as WithVariables).variables);
+    clone.parent = parent;
+    clone.variables = Object.assign({}, rule.variables);
+    await transformNode(clone, opts);
+    replacements.push(...(clone.nodes ?? []));
+  }
 
-    ruleClones.push(clone);
-  });
-
-  return waterfall(ruleClones, (clone) =>
-    transformNode(clone, opts).then(() => {
-      replacements.push(...(clone.nodes ?? []));
-    }),
-  ).then(() => {
-    rule.parent!.insertBefore(rule, replacements);
-    rule.remove();
-  });
+  parent.insertBefore(rule, replacements);
+  rule.remove();
 };
-
-export default transformEachAtrule;

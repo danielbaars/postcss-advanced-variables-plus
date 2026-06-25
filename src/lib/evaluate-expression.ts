@@ -87,5 +87,3 @@ export const evaluateExpression = (input: string): number | null => {
   if (pos !== s.length) return null;
   return result;
 };
-
-export default evaluateExpression;

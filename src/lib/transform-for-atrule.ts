@@ -1,14 +1,12 @@
 import { list, type AtRule, type ChildNode } from "postcss";
 import type { TransformOpts } from "../transform-opts.js";
-import getReplacedString from "./get-replaced-string.js";
-import setVariable from "./set-variable.js";
-import waterfall from "./waterfall.js";
-import transformNode from "./transform-node.js";
-import evaluateExpression from "./evaluate-expression.js";
-import type { WithVariables } from "./get-variables.js";
+import { getReplacedString } from "./get-replaced-string.js";
+import { setVariable } from "./set-variable.js";
+import { transformNode } from "./transform-node.js";
+import { evaluateExpression } from "./evaluate-expression.js";
 
 const resolveNumber = (raw: string, node: AtRule, opts: TransformOpts): number => {
-  const str = getReplacedString(raw, node as unknown as WithVariables, opts);
+  const str = getReplacedString(raw, node, opts);
   const n = evaluateExpression(str);
   return n !== null ? n : Number(str);
 };
@@ -22,30 +20,25 @@ const getForOpts = (node: AtRule, opts: TransformOpts) => {
   return { varname, start, end, increment };
 };
 
-const transformForAtrule = (rule: AtRule, opts: TransformOpts): Promise<void> | undefined => {
-  if (!opts.transform.includes("@for")) return undefined;
+export const transformForAtrule = async (rule: AtRule, opts: TransformOpts): Promise<void> => {
+  if (!opts.transform.includes("@for")) return;
+
+  const parent = rule.parent;
+  if (!parent) return;
 
   const { varname, start, end, increment } = getForOpts(rule, opts);
   const direction = start <= end ? 1 : -1;
   const replacements: ChildNode[] = [];
-  const ruleClones: AtRule[] = [];
 
   for (let i = start; i * direction <= end * direction; i += increment * direction) {
-    setVariable(rule as unknown as WithVariables, varname, i, opts);
+    setVariable(rule, varname, i, opts);
     const clone = rule.clone() as AtRule;
-    clone.parent = rule.parent ?? undefined;
-    (clone as unknown as WithVariables).variables = Object.assign({}, (rule as unknown as WithVariables).variables);
-    ruleClones.push(clone);
+    clone.parent = parent;
+    clone.variables = Object.assign({}, rule.variables);
+    await transformNode(clone, opts);
+    replacements.push(...(clone.nodes ?? []));
   }
 
-  return waterfall(ruleClones, (clone) =>
-    transformNode(clone, opts).then(() => {
-      replacements.push(...(clone.nodes ?? []));
-    }),
-  ).then(() => {
-    rule.parent!.insertBefore(rule, replacements);
-    rule.remove();
-  });
+  parent.insertBefore(rule, replacements);
+  rule.remove();
 };
-
-export default transformForAtrule;

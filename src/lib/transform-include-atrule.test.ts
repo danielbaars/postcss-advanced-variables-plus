@@ -20,7 +20,7 @@ describe("transformIncludeAtrule", () => {
 
       const warnings = result.warnings();
       expect(warnings.length).toBeGreaterThan(0);
-      expect(warnings[0].text).toContain("undefined-mixin");
+      expect(warnings[0]?.text).toContain("undefined-mixin");
     });
 
     it("leaves @include in output when mixin is not found and unresolved=ignore", async () => {

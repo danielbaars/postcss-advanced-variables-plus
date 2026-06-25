@@ -66,7 +66,7 @@ describe("transformContentAtrule", () => {
 
       const warnings = result.warnings();
       expect(warnings.length).toBeGreaterThan(0);
-      expect(warnings[0].text).toContain("@content");
+      expect(warnings[0]?.text).toContain("@content");
     });
 
     it("leaves @content in output when outside a mixin and unresolved=ignore", async () => {

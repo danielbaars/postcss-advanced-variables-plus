@@ -1,5 +1,5 @@
 import type { Plugin } from "postcss";
-import transformNode from "./lib/transform-node.js";
+import { transformNode } from "./lib/transform-node.js";
 import { createImportResolver } from "./lib/import-resolver.js";
 import type { PluginOptions } from "./options.js";
 
@@ -17,10 +17,10 @@ const plugin = (opts: PluginOptions = {}): Plugin => ({
   Root(root, { result }) {
     const disabledFeatures = String(opts.disable ?? "").split(/\s*,\s*|\s+,?\s*|\s,?\s+/);
     const transform = allFeatures.filter((f) => !disabledFeatures.includes(f));
-    const unresolved = String(opts.unresolved ?? "throw").toLowerCase() as "throw" | "warn" | "ignore";
-    const importCache = Object(opts.importCache) as Record<string, unknown>;
+    const unresolved = opts.unresolved ?? "throw";
+    const importCache = opts.importCache ?? {};
     const importFilter = opts.importFilter ?? ((id: string) => !matchProtocol.test(id));
-    const importPaths = ([] as string[]).concat(opts.importPaths ?? []);
+    const importPaths = [...(opts.importPaths ?? [])];
     const importRoot = opts.importRoot ?? process.cwd();
     const importResolve = opts.importResolve ?? createImportResolver({ aliases: opts.aliases ?? {} });
 
@@ -40,4 +40,5 @@ const plugin = (opts: PluginOptions = {}): Plugin => ({
 
 plugin.postcss = true;
 
+// PostCSS plugin convention requires a default export as the package's primary entry point.
 export default plugin;

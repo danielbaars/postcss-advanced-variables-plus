@@ -1,9 +1,14 @@
-import type { ChildNode, Container } from "postcss";
+import type { Node } from "postcss";
 
 export type VariableValue = string | number | boolean | VariableValue[] | VariableMap;
 export type VariableMap = { [key: string]: VariableValue };
-export type WithVariables = (ChildNode | Container) & { variables?: VariableMap };
+// All PostCSS nodes carry `variables` via the module augmentation below.
+export type WithVariables = Node;
 
-const getVariables = (node: unknown): VariableMap => Object(Object(node).variables);
+export const getVariables = (node: unknown): VariableMap => Object(Object(node).variables);
 
-export default getVariables;
+declare module "postcss" {
+  interface Node {
+    variables?: VariableMap;
+  }
+}
