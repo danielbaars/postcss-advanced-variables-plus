@@ -1,6 +1,6 @@
 {
   "name": "postcss-advanced-variables-plus",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Use Sass-like variables, conditionals, and iterators in CSS — a modernised TypeScript fork of postcss-advanced-variables",
   "author": "Daniel Baars",
   "license": "CC0-1.0",
