@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/danielbaars/postcss-advanced-variables-plus/compare/v1.4.3...v1.5.0) (2026-07-16)
+
+
+### Features
+
+* export SCSS syntax ([ed31412](https://github.com/danielbaars/postcss-advanced-variables-plus/commit/ed3141219ec2cbe559f9fb9238d4405f3d770256))
+
 ## [1.4.3](https://github.com/danielbaars/postcss-advanced-variables-plus/compare/v1.4.2...v1.4.3) (2026-06-25)
 
 ### Bug Fixes
