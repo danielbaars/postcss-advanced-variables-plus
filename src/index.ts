@@ -1,4 +1,5 @@
 import type { Plugin } from "postcss";
+import postcssScss from "postcss-scss";
 import { transformNode } from "./lib/transform-node.js";
 import { createImportResolver } from "./lib/import-resolver.js";
 import type { PluginOptions } from "./options.js";
@@ -7,6 +8,7 @@ export type { PluginOptions };
 export type { ImportResolution, ImportResolve, ImportFilter } from "./options.js";
 export { createImportResolver } from "./lib/import-resolver.js";
 export type { ImportResolverOptions } from "./lib/import-resolver.js";
+export { postcssScss as scssSyntax };
 
 const matchProtocol = /^(?:[A-z]+:)?\/\//;
 

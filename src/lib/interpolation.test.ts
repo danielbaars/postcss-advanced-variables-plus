@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import postcss from "postcss";
-import postcssScss from "postcss-scss";
-import plugin from "../index.js";
+import plugin, { scssSyntax } from "../index.js";
 
 // Standard CSS parser — works for plain $var and #{} in at-rule params
 const run = (input: string) =>
@@ -12,7 +11,7 @@ const run = (input: string) =>
 // SCSS parser — required for #{} in property names, values, and selectors
 const runScss = (input: string) =>
   postcss([plugin()])
-    .process(input, { from: undefined, syntax: postcssScss })
+    .process(input, { from: undefined, syntax: scssSyntax })
     .then((r) => r.css);
 
 describe("variable interpolation", () => {

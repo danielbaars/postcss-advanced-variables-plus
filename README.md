@@ -37,23 +37,19 @@ export default {
 
 ### `#{}` interpolation in selectors and property names
 
-PostCSS's standard CSS parser rejects `#{...}` in selectors, property names, and declaration values because `{` would be interpreted as opening a block. To use `#{}` in those positions, pair this plugin with a SCSS-aware syntax:
-
-```sh
-npm install postcss-scss
-```
+PostCSS's standard CSS parser rejects `#{...}` in selectors, property names, and declaration values because `{` would be interpreted as opening a block. This package exports its bundled SCSS-aware syntax as `scssSyntax`:
 
 ```js
-import postcssScss from "postcss-scss";
+import advancedVariables, { scssSyntax } from "postcss-advanced-variables-plus";
 
 export default {
-  syntax: postcssScss,
+  syntax: scssSyntax,
   plugins: [advancedVariables()],
 };
 ```
 
 ```css
-/* now valid with postcss-scss */
+/* now valid with scssSyntax */
 $layers: alpha, beta, gamma;
 
 :root {
@@ -68,10 +64,10 @@ $layers: alpha, beta, gamma;
 }
 ```
 
-`#{}` inside at-rule params works without `postcss-scss` because the surrounding `()` protect the inner `{` from being misread by the standard parser:
+`#{}` inside at-rule params works without `scssSyntax` because the surrounding `()` protect the inner `{` from being misread by the standard parser:
 
 ```css
-/* works without postcss-scss */
+/* works without scssSyntax */
 $bp: 600px;
 @media (min-width: #{$bp}) {
 }
