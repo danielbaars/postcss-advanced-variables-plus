@@ -19,8 +19,7 @@ export const transformIncludeAtrule = async (rule: AtRule, opts: TransformOpts):
 
   const { name, args } = getIncludeOpts(rule, opts);
   const mixin = getClosestVariable(`@mixin ${name}`, rule.parent, opts) as
-    | { params: { name: string; value: string | undefined }[]; rule: AtRule }
-    | undefined;
+    { params: { name: string; value: string | undefined }[]; rule: AtRule } | undefined;
 
   if (mixin) {
     const parent = rule.parent;
