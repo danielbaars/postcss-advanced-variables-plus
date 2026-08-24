@@ -14,6 +14,21 @@ const runScss = (input: string) =>
     .then((r) => r.css);
 
 describe("mixin argument paren-splitting", () => {
+  it("maps named arguments to their mixin parameters", async () => {
+    const result = await run(`
+      @mixin focus-dual-colored($offset: default, $position: relative, $border-radius: none) {
+        offset: $offset;
+        position: $position;
+        border-radius: $border-radius;
+      }
+      a { @include focus-dual-colored($position: absolute, $border-radius: 50%); }
+    `);
+
+    expect(result).toContain("offset: default");
+    expect(result).toContain("position: absolute");
+    expect(result).toContain("border-radius: 50%");
+  });
+
   it("passes var() arg correctly", async () => {
     const result = await run(`
       @mixin foo($c: red) { color: $c; }
