@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/danielbaars/postcss-advanced-variables-plus/compare/v1.5.0...v1.6.0) (2026-08-24)
+
+
+### Features
+
+* support named mixin arguments ([6f02022](https://github.com/danielbaars/postcss-advanced-variables-plus/commit/6f02022d19af76b8a59405c8323af9abe9af0815))
+
 ## [1.5.0](https://github.com/danielbaars/postcss-advanced-variables-plus/compare/v1.4.3...v1.5.0) (2026-07-16)
 
 
