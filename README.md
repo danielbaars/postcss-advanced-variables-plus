@@ -73,6 +73,18 @@ $bp: 600px;
 }
 ```
 
+### Named mixin arguments
+
+Mixin arguments can be passed by parameter name. Parameters that are omitted keep their default value:
+
+```css
+@mixin focus-dual-colored($offset: default, $position: relative, $border-radius: none) {
+  /* ... */
+}
+
+@include focus-dual-colored($position: absolute, $border-radius: 50%);
+```
+
 ### `@each` over lists and maps
 
 Lists can expose the current value and optional numeric index:
